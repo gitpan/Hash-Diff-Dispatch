@@ -1,0 +1,55 @@
+TITLE
+    Hash::Diff::Dispatch - execute code depending on difference between
+    hashes
+
+DESCRIPTION
+    Execute code based on the difference between the saved version of a hash
+    and a new one
+
+SYNOPSIS
+     my $hash_watcher = Hash::Diff::Dispatch->new(
+
+            {}, # Sets the starting hash
+ 
+            # The events will be called using the order returned
+            # by calling 'keys' on these values...
+        
+            'b' => \&bold,
+            'i' => \&italic,
+
+     );
+
+     # Will call: bold('on', 5)
+     $hash_watcher->update( { b => 5, a => 'la' } );
+
+     # Will call: bold('changed', 6)
+     $hash_watcher->update( { b => 6 } );
+
+     # Will call: bold('changed', 0)
+     $hash_watcher->update( { b => 0 } );
+
+     # Will call: bold('off')
+     $hash_watcher->update( {} );
+
+METHODS
+  new
+    Accepts a starting hash-ref, and then a list of keys you want to watch,
+    and the code to execute when they change. It will take a copy of the
+    hash in the hash-ref you specify.
+
+  update
+    Accepts a hash-ref, which it'll take a copy of, and make it the 'saved'
+    hash to check the next call to "update" again.
+
+    If a key's value has changed, it'll execute the code specified when you
+    created the object. If the key exists where it didn't before, it'll pass
+    'on' as the first argument, and the new value as the second. If it's
+    changed, 'changed' and the new value. If it's been deleted, it'll pass
+    'off'.
+
+AUTHOR
+    Pete Sergeant - pete@clueball.com
+
+LICENSE
+    As Perl.
+
